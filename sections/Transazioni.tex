@@ -1,0 +1,28 @@
+Una transazione \`e una sequenza di operazioni di lettura e scrittura sulla base di dati a cui viene garantita un’esecuzione che soddisfa alcune proprietà: correttezza, robustezza, isolamento.
+
+\subsection{Proprietà ACID}
+\begin{itemize}
+    \item \textbf{Atomicity}: La transazione viene eseguita in maniera atomica. Se un pezzo non viene completato, allora nulla lo \`e.
+    \item \textbf{Consistency}: Nessun vincolo di integrità viene violato
+    \item \textbf{Isolation}: Ogni transazione esegue indipendentemente dalle altre eseguite allo stesso momento
+    \item \textbf{Durability}: Gli effetti di una transazione completata sono persistenti nel tempo
+\end{itemize}
+
+\subsection{Transazioni Flat}
+Sono le più usate. Si caratterizzano dalle parole chiave:
+\begin{itemize}
+    \item \code{BEGIN}: Inizia una transazione
+    \item \code{COMMIT}: Completa con successo una transazione ("ufficializza" il risultato)
+    \item \code{ROLLBACK}: Termina (anticipatamente) la transazione.
+\end{itemize}
+
+\subsection{Controllo dei vincoli}
+Ci sono 2 modalità di controllo:
+\begin{itemize}
+    \item \textbf{Valutazione immediata}: Dopo ogni comando viene eseguito il \code{CHECK}. Se il comando viola il vincolo viene annullato.
+    \item \textbf{Valutazione differita}: Controllo al termine della transazione.
+    \begin{itemize}
+        \item \code{DEFERRABLE INITIALLY IMMEDIATE}: Verifica dopo ogni istruzione
+        \item \code{DEFERRABLE INITIALLY DEFERRED}: Verifica al termine della transazione
+    \end{itemize}
+\end{itemize}

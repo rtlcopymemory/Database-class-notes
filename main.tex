@@ -1,0 +1,128 @@
+\documentclass[10pt]{article}
+
+\usepackage[italian]{babel}
+\selectlanguage{italian}
+
+\usepackage{ulem} % strikethrough
+
+\usepackage{scrextend} % indentation
+
+\usepackage{graphicx} % for pics
+\graphicspath{{images/}{../images/}} % source folder for pics
+
+\usepackage{amsmath} % Math
+
+\usepackage{hyperref} % Clickable Table of content
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\usepackage{tabularx} % Tables
+
+\usepackage[margin=1.5in,bottom=1.5in,top=1.5in]{geometry} % changes the margin
+% Fancy header and footer with page number on the right
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\fancyfoot{}
+\rfoot{\thepage}
+
+% Algorithms Pseudo-code
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Enviroment called theorem, resetting every section, printing 'Theorem'
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{definition}{Definizione}[section]
+\newtheorem{demonstration}{Dimostrazione}[definition]
+
+\def\code#1{\texttt{#1}}
+
+\usepackage{subfiles} % Best loaded last in the preamble
+
+\title{Basi di Dati\\\Large{Informatica}}
+\author{Federico Crippa}
+\date{Unige\\A.A. 2019/2020}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\newpage
+\section*{Disclaimer}
+\subfile{sections/disclaimer.tex}
+
+\section*{Credits}
+\subfile{sections/credits.tex}
+\newpage
+
+\part{Basi di Dati 1}
+\section{Modello relazionale}
+\subfile{sections/modello.tex}
+
+\newpage
+\section{SQL DDL}
+\subfile{sections/SQL-DDL.tex}
+
+\section{Algebra Relazionale}
+\subfile{sections/AlgebraRelazionale.tex}
+
+\section{Normalizzazione}
+\subfile{sections/Normalizzazione.tex}
+
+\newpage
+\section{Triggers}
+\subfile{sections/Triggers.tex}
+
+\newpage
+\section{Progettazione}
+\subfile{sections/progettazione.tex}
+
+\newpage
+\part{Basi di Dati 2}
+\section{Architettura di un DBMS}
+\subfile{sections/architettura.tex}
+
+\break
+\section{Controllo dell'accesso}
+\subfile{sections/accesso.tex}
+
+\break
+\section{Strutture di memorizzazione}
+\subfile{sections/memorie.tex}
+
+\section{Indici}
+\subfile{sections/indici.tex}
+
+\section{Ottimizzazione Logica}
+\subfile{sections/ottimizzazioneLogica.tex}
+
+\break
+\section{Ottimizzazione Fisica}
+\subfile{sections/ottimizzazioneFisica.tex}
+
+\break
+\section{Tuning Logico}
+\subfile{sections/TuningLogico.tex}
+
+\section{Tuning Fisico}
+\subfile{sections/TuningFisico.tex}
+
+\section{Tuning Delle Interrogazioni}
+\subfile{sections/TuningQuery.tex}
+
+\section{Transazioni}
+\subfile{sections/Transazioni.tex}
+
+\section{Controllo della Concorrenza}
+\subfile{sections/Concorrenza.tex}
+
+\section{Gestione del Ripristino}
+\subfile{sections/Ripristino.tex}
+
+\end{document}

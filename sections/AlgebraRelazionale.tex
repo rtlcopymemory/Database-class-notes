@@ -1,0 +1,77 @@
+Ha $5 + 1$ operatori base ($5$ operatori $+ 1$ che \`e la ridenominazione).
+
+\subsection{Operatori Unari}
+\subsubsection{Proiezione}
+$$\Pi_{A, B, ...}(Relazione)$$
+Corrisponde al \code{SELECT}\\
+Monotono
+
+\subsubsection{Selezione}
+$$\sigma_{F}(Relazione) \qquad F = \text{funzione booleana}$$
+Corrisponde al \code{WHERE}\\
+Monotono
+
+\subsubsection{Ridenominazione}
+$$\rho_{vecchi\_nomi \leftarrow nuovi\_nomi}(Relazione)$$
+Corrisponde al \code{AS}\\
+Monotono
+
+\subsection{Operatori Binari}
+\subsubsection{Prodotto cartesiano}
+$$R_1 \times R_2 \Rightarrow R$$
+Non \`e possibile eseguirlo se le relazioni hanno attributi in comune.\\
+Grado $R =$ Grado $R_1 +$ Grado $R_2$\\
+Cardinalità $R =$ Cardinalità $R_1 \times$ Cardinalità $R_2$\\
+Corrisponde a \code{FROM $R_1$, $R_2$}\\
+Commutativo\\
+Monotono
+
+\subsubsection{Unione}
+$$R_1 \cup R_2 \Rightarrow R$$
+Grado $R =$ Grado $R_1 =$ Grado $R_2$\\
+Cardinalità $R =$ Cardinalità $R_1 +$ Cardinalità $R_2$\\
+Corrisponde a \code{UNION}\\
+Commutativo\\
+Monotono
+
+\subsubsection{Differenza}
+$$R_1 - R_2 \Rightarrow R$$
+$$R_1 \backslash R_2 \Rightarrow R$$
+Grado $R =$ Grado $R_1 =$ Grado $R_2$\\
+Cardinalità $R \leq$ Cardinalità $R_1$\\
+Corrisponde a \code{EXCEPT}
+
+\subsection{Operatori aggiuntivi o derivati}
+\subsubsection{Intersezione}
+$$R_1 \cap R_2 \Rightarrow R$$
+$$R_1 \cap R_2 = R_1 - (R_1 - R_2)$$
+Grado $R =$ Grado $R_1 =$ Grado $R_2$\\
+Corrisponde a \code{INTERSECT}\\
+Commutativo
+
+\subsubsection{Theta Join}
+$$R_1 \bowtie_{F} R_2 \Rightarrow R$$
+$$R_1 \bowtie_{F} R_2 = \sigma_{F}(R_1 \times R_2)$$
+Grado $R =$ Grado $R_1 +$ Grado $R_2$\\
+Cardinalità $R \leq$ Cardinalità $R_1 \times$ Cardinalità $R_2$\\
+Un Join con condizione di Uguaglianza viene definito \textit{Equi-Join}\\
+Corrisponde a \code{$R_1$ JOIN $R_2$ ON $F$}
+
+\subsubsection{Join Naturale}
+$$R_1 \bowtie R_2 \Rightarrow R$$
+Corrisponde a un prodotto cartesiano nel caso in cui non ci siano attributi in comune.\\
+Grado $R =$ Grado $R_1 +$ Grado $R_2 -$ numero colonne in comune\\
+Cardinalità $R \leq$ Cardinalità $R_1 \times$ Cardinalità $R_2$\\
+Corrisponde a \code{NATURAL JOIN}
+
+\subsubsection{Divisione}
+$$R_1 \div R_2 \Rightarrow R$$
+$$R_1 \div R_2 = \Pi_{D}(R_1) - \Pi_{D}((\Pi_{D}(R_1) \times R_2) - R_1)$$
+$D =$ Attributi non in comune.\\
+$(\Pi_{D}(R_1) \times R_2) =$ Tuple su $D$ completate in tutti i possibili modi rispetto a $R_2$ (tutte le possibilità)\\
+$\Pi_{D}((\Pi_{D}(R_1) \times R_2) - R_1) =$ Tuple su $D$ per cui manca almeno un completamento in $R_2$ \vspace{2mm} \\
+Grado $R =$ Grado $R_1 -$ Grado $R_2$\\
+Cardinalità $R \leq$ Cardinalità $R_1$\\
+Non esiste un operatore preciso in SQL ma si possono usare \code{NOT EXISTS} ristrutturando la query in 2 sotto-query oppure \code{HAVING COUNT}
+$$(R \div S) \times S \not= R$$
+$$(R \times S) \div S = R$$

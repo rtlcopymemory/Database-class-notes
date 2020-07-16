@@ -1,0 +1,50 @@
+Dato un carico di lavoro, l’attività di tuning fisico si preoccupare di progettare uno schema fisico, in termini di insieme di indici creati, che permetta di rendere il più possibile efficiente l’esecuzione delle operazioni contenute nel workload.\\
+Il Tuning fisico quindi \`e L'Attività di scegliere su quali tabelle e attributi creare quale tipo di indice.
+\begin{itemize}
+    \item Prima si ragiona su quali indici potrebbero migliorare le prestazioni delle query più importanti, analizzando una query alla volta
+    \item Quindi si considera se l’aggiunta di ulteriori indici può migliorare la soluzione
+\end{itemize}
+Approccio generale:
+\begin{enumerate}
+    \item Si guardano le interrogazioni, gli attributi nel \code{WHERE} sono candidati chiavi di ricerca.
+    \item Si individuano gli indici
+    \item Si valuta il guadagno di tempo o meno facendo delle prove
+    \item Se non \`e efficace, si capisce il perché ed eventualmente di rimuove/modifica/aggiunge un indice
+\end{enumerate}
+Se una tabella \`e piccola (memorizzata su uno o pochi blocchi) \`e opportuno evitare di creare indici su di essa siccome aggiungerebbe solo costi e uso di spazio.
+
+\subsection{Indici ordinati o Hash}
+\begin{enumerate}
+    \item Per condizioni di selezione e join di uguaglianza, un indice hash può garantire migliori prestazioni, ma la presenza di overflow può però limitare il vantaggio.
+    \item Per condizioni di selezione e join di tipo intervallo, solo un indice ordinato permette l’accesso ai dati
+\end{enumerate}
+
+\subsection{Indici ordinati clusterizzati e non clusterizzati}
+Usiamo $h$ per definire gli accessi all'indice, $k$ numero blocchi acceduti.
+\begin{itemize}
+    \item $k$ \`e maggiore per indici non clusterizzati.
+    \item Se non clusterizzato, nel caso peggio $k =$ numero di tuple restituite.
+\end{itemize}
+L'indice \`e preferibile rispetto alla scansione sequenziale se $B(R) > h + k$ (I blocchi totali sono maggiori degli accessi all'indice + i blocchi).\\
+$k$ \`e piccolo per interrogazioni ad alta selettività.\\
+Se su una tabella è necessario creare \textbf{un solo indice}, conviene crearlo clusterizzato (sempre più conveniente di indice non clusterizzato).\\
+Se sono invece necessari \textbf{multipli indici}, essendo che se ne può clusterizzare solo uno, bisogna preferire quello che corrisponde all'interrogazione meno selettiva o possibilmente quello che ottimizza più di una interrogazione.\vspace{2mm} \\
+Se l'indice contiene anche la risposta all'interrogazione si definisce \textbf{covering index}.
+
+\subsection{Scelta degli indici per i Join}
+\textbf{Caso Equijoin}
+\begin{itemize}
+    \item Index nested loop \`e meglio di Hash Join se:
+    \begin{itemize}
+        \item La condizione \`e poco selettiva (prendo la maggior parte delle tuple)
+        \item L'indice sulla seconda tabella \`e covering o clusterizzato
+    \end{itemize}
+    
+    \item Altrimenti Hash Join \`e di solito meglio
+    \item Degli indici clusterizzati sono utili per la strategia Merge Join
+\end{itemize}
+
+\noindent \textbf{Non Equijoin}
+\begin{itemize}
+    \item Indice ordinato evita la scansione sequenziale
+\end{itemize}

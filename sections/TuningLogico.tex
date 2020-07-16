@@ -1,0 +1,33 @@
+Il \textbf{Tuning} in generale tratta dell'ottimizzazione degli schemi (logici e fisici) a seconda delle richieste di un determinato \textit{workload}.\\
+Il \textbf{Tuning logico} in particolare riguarda l'eventuale riscrittura dello schema logico a seconda dei principi della normalizzazione o, a volte, della convenienza in termini di prestazioni.
+
+\subsection{Tuning della normalizzazione}
+\textbf{Due relazioni} normalizzate R1(XY) e R2(XZ) sono preferibili a una singola relazione normalizzata ad esse equivalente R(XYZ) se:
+\begin{itemize}
+    \item le operazioni più frequenti accedono solo XY o XZ
+    \item gli attributi Y e Z ammettono valori che occupano molto spazio
+\end{itemize}
+In questo modo si riduce la dimensione delle relazioni che devono essere accedute.\vspace{2mm} \\
+Una \textbf{singola relazione} normalizzata R(XYZ) è meglio di due relazioni normalizzate e ad essa equivalenti R1(XY) e R2(XZ) se:
+\begin{itemize}
+    \item le operazioni più frequenti richiedono di accedere contemporaneamente XY e Z
+\end{itemize}
+In questo modo, si evita l’esecuzione di un join.
+
+\subsection{Tuning della denormalizzazione}
+Pros:
+\begin{itemize}
+    \item può migliorare le prestazioni quando attributi che appartengono a diverse relazioni normalizzate devono essere spesso acceduti insieme.
+\end{itemize}
+Cons:
+\begin{itemize}
+    \item peggiora le prestazioni in caso di aggiornamenti frequenti.
+\end{itemize}
+Denormalizzare lo schema a livello logico significa aggiungere allo schema logico nuove relazioni, non normalizzate, corrispondenti al risultato di join frequenti, eseguiti nell’ambito di operazioni contenute nel carico di lavoro.
+\begin{itemize}
+    \item C'\`e bisogno di Trigger per aggiornare le nuove tabelle ogni volta che le tabelle di base vengono aggiornate.
+\end{itemize}
+\vspace{4mm}
+\`E possibile usare una via di mezzo fra normalizzazione e Denormalizzazione, cioè il meccanismo di \textbf{Viste materializzate}. In postgreSQL:\vspace{2mm}\\
+\code{CREATE MATERIALIZED VIEW Name\\
+AS <Query>}

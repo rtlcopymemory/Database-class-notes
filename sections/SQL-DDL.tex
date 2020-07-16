@@ -1,0 +1,163 @@
+\subsection{Operazioni su Tabelle}
+\subsubsection{Creazione}
+Una tabella si genera con \code{CREATE TABLE <nome> (<nome colonna> <tipo>, ...)}.
+
+\subsubsection{Vincoli e proprietà}
+A destra del tipo si possono aggiungere alcune keywords per otterene dei \textbf{vincoli} o specifiche:
+\begin{itemize}
+    \item \code{DEFAULT <valore>}: Nel caso questa colonna non sia specificata nel relativo \code{INSERT} viene inserito il valore specificato
+    \item \code{NOT NULL}: La colonna non può contenere valori nulli (di default può)
+\end{itemize}
+Dopo la dichiarazione delle colonne si includono i vincoli di \textbf{chiave}, \textbf{chiave primaria} e \textbf{chiave esterna}
+\begin{itemize}
+    \item \code{PRIMARY KEY (<colonna>[, <colonna>]*)}: Chiave primaria
+    \item \code{UNIQUE (<colonna>[, <colonna>]*)}: Chiave (non primaria ma deve rimanere non ripetuta)
+    \item \code{FOREIGN KEY (<colonna>[, <colonna>]*) REFERENCES <tabella>}: Chiave esterna
+\end{itemize}
+Questi ultimi vincoli sono anche esprimibili "in-line" dopo la dichiarazione della colonna tipo: \code{nome VARCHAR(20) PRIMARY KEY}.\\
+SQL per aiutare a mantenere l'integrità dei dati permette di aggiungere dopo a \code{REFERENCES <tabella>} una clausola che specifica l'azione da eseguire nel caso che la chiave riferita (\code{t}) venga cancellata o modificata:
+\begin{itemize}
+    \item \code{ON DELETE <azione>}:
+    \begin{itemize}
+        \item \code{NO ACTION}: Se violerebbe il vincono, non la cancella
+        \item \code{CASCADE}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene anche cancellata.
+        \item \code{SET NULL}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene messa a \code{NULL}.
+        \item \code{SET DEFAULT}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene messa al valore di default.
+    \end{itemize}
+    \item \code{ON DELETE <azione>}:
+    \begin{itemize}
+        \item \code{NO ACTION}: Se violerebbe il vincono, non la cancella
+        \item \code{CASCADE}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene anche modificata.
+        \item \code{SET NULL}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene messa a \code{NULL}.
+        \item \code{SET DEFAULT}: Se \code{t} esiste nella tabella che la riferisce, ogni tupla che ne fa riferimento viene messa al valore di default.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Cancellazione}
+\code{DROP TABLE <nome tabella> [RESTRICT|CASCADE]}.\\
+Con \code{RESTRICT} viene cancellata solo se non riferita da altre tabelle. \code{CASCADE} invece cancella anche tutti gli elementi che la riferivano.
+
+\subsubsection{Modifica}
+\code{ALTER TABLE <nome tabella> <azione>}\\
+Possibili azioni:
+\begin{itemize}
+    \item \code{ADD [COLUMN] <nome colonna> <tipo>}
+    \item \code{ALTER [COLUMN] <nome colonna> \{SET DEFAULT <valore default\\nuovo> | DROP DEFAULT\}}
+    \item \code{DROP [COLUMN] <come colonna> \{RESTRICT | CASCADE\}}
+    \item \code{ADD CONSTRAINT <specifica vincolo>}: (un vincolo può essere ad esempio \code{UNIQUE})
+    \item \code{DROP CONSTRAINT <nome vincolo>}
+\end{itemize}
+
+\subsection{Interrogazioni}
+\code{SELECT [DISTINCT] \{<colonne>|*\}\\FROM <tabella[, tabella]*>\\WHERE <condizione booleana>}
+
+\subsubsection{Alcuni operatori particolari}
+\begin{itemize}
+    \item \code{x BETWEEN a AND b}: $a \leq x \leq b$
+    \item \code{a IN (a, b, c, ...)}: ritorna true se $a$ \`e contenuto nell'insieme indicato dopo
+    \item \code{LIKE 'pattern'}: pattern matching in sql
+\end{itemize}
+
+\subsection{Operazioni insiemistiche}
+Tutte le operazione di seguito riportate \textbf{eliminano eventuali duplicati}.
+\begin{itemize}
+    \item \code{UNION}: \textbf{Unione}
+    \item \code{INTERSECT}: \textbf{Intersezione}
+    \item \code{EXCEPT}: \textbf{Sottrazione}
+\end{itemize}
+
+\subsection{Ordinamento dei risultati}
+Dopo al \code{WHERE}:\\
+\code{ORDER BY <nome colonna> [ASC|DESC][, <nome colonna> [ASC|DESC]]*}
+
+\subsection{Join}
+\begin{itemize}
+    \item \code{<nome relazione> CROSS JOIN <nome relazione>}: Prodotto cartesiano
+    \item \code{<nome relazione> JOIN <nome relazione> ON <predicato>}:\\Restano solo le tuple che soddisfano il predicato
+    \item \code{<nome relazione> NATURAL JOIN <nome relazione>}: Join fra colonne con lo stesso nome
+    \item \code{<nome relazione> JOIN <nome relazione>\\USING <lista nomi colonne>}: Natural Join ma con colonne elencate
+\end{itemize}
+
+\subsection{Outer Join}
+Gli outer join mantengono anche le tuple senza "associazioni" assegnando ai valori non conosciuti il valore \code{NULL}
+\begin{itemize}
+    \item \code{FULL OUTER JOIN}: mantiene tutte le tuple del join + le tuple non del join con i \code{NULL}
+    \item \code{LEFT}: aggiunge al join tutte le tuple della tabella di sinistra con valori null per le colonne della tabella di destra
+    \item \code{RIGHT}: il contrario del \code{LEFT}
+\end{itemize}
+
+\subsection{Funzioni di gruppo}
+Se usate senza la clausola \code{GROUP BY <colonna o elenco>} agiscono su tutta la tabella.
+\begin{itemize}
+    \item \code{COUNT([DISTINCT] <colonna|*>)}
+    \item \code{MIN(<colonna>)}
+    \item \code{AVG(<colonna>)}
+    \item \code{MAX(<colonna>)}
+    \item \code{SUM(<colonna>)}
+\end{itemize}
+Si possono solo usare nella \code{SELECT} o nella \code{HAVING}\\
+Quando si usa \code{GROUP BY}, le colonne elencate sono le uniche, oltre alle funzioni di gruppo su qualunque colonna, che possono essere messe nel \code{SELECT} siccome viene elencata una sola tupla per ogni gruppo e le colonne per le quali NON si raggruppa avranno valori diversi all'interno dello stesso gruppo.\\
+\code{HAVING} mette una condizione per la quale di sceglie il gruppo. (filtra i gruppi)
+\subsubsection{Modello di esecuzione}
+\begin{enumerate}
+    \item Si applica la condizione del \code{WHERE}
+    \item Si divide la tabella a seconda del \code{GROUP BY}
+    \item Si applica la condizione nel \code{HAVING}
+    \item Si calcolano le funzioni di gruppo
+\end{enumerate}
+\subsubsection{Valori nulli}
+Con le operazioni aritmetiche se \`e presente un valore \code{NULL} allora il risultato \`e \code{NULL}.\\
+Con le operazioni di gruppo, i \code{NULL} vengono ignorati e viene ritornato un valore. Nel caso una colonna sia vuota o contenesse solo \code{NULL}, allora anche le funzioni di gruppo ritornano \code{NULL}.
+
+\subsection{Viste}
+\code{CREATE VIEW <nome vista> [(<lista nomi colonne>)]\\
+AS <interrogazione>\\
+\ [WITH [{LOCAL | CASCADE}] CHECK OPTION];}\vspace{4mm} \\
+Sulle viste si possono eseguire:
+\begin{itemize}
+    \item interrogazioni
+    \begin{itemize}
+        \item Restrizione: non è ammesso l’uso di funzioni di gruppo su colonne di viste che sono a loro volta definite tramite funzioni di gruppo
+    \end{itemize}
+    
+    \item inserimenti
+    \begin{itemize}
+        \item la query di definizione Q soddisfa tutte le restrizioni richieste per il DELETE
+        \item tutte le colonne di V soddisfano le restrizioni richieste per l’UPDATE
+        \item tutte le colonne di R su cui vale il vincolo di NOT NULL e per cui non è specificato valore di default sono incluse in V
+    \end{itemize}
+    
+    \item aggiornamenti
+    \begin{itemize}
+        \item la query di definizione Q soddisfa tutte le restrizioni richieste per il DELETE
+        \item C non è definita tramite un’espressione o funzione
+    \end{itemize}
+    
+    \item cancellazioni
+    \begin{itemize}
+        \item è su una singola relazione R
+        \item non contiene
+        \begin{itemize}
+            \item GROUP BY
+            \item DISTINCT
+            \item operatori insiemistici
+            \item funzioni di gruppo
+        \end{itemize}
+        \item eventuali sotto-interrogazioni in Q non fanno riferimento ad R
+    \end{itemize}
+\end{itemize}
+
+\subsection{Sotto-interrogazioni}
+Interrogazioni all'interno di un'altra interrogazione. Di solito nella clausola \code{WHERE}.
+\begin{itemize}
+    \item \textbf{Sotto-interrogazione semplice}: Ritorna un singolo valore (scalare) o più. Nel casi si abbia più di un valore, viene trattato come un insieme e serve quindi l'operatore \code{IN}
+    \item \textbf{Sotto-interrogazione Table Subquery}: usano i quantificatori \code{ANY} (almeno una tupla della sotto query e \code{ALL} (tutte le tuple della sottoquery)
+    \item \textbf{Sotto-interrogazione Correlata}: dipendono dalla tupla candidata
+\end{itemize}
+
+\subsection{Exists o Not Exists}
+\code{EXISTS} e \code{NOT EXISTS} possono essere utilizzati rispettivamente al posto di \code{INTERSECT} e \code{EXCEPT} (sottrazione)
+
+\subsection{Divisione}
+La divisione viene implementata tramite l'uso di due \code{NOT EXISTS} in due sotto-query (\code{WHERE} non esiste film di "autore" dove non esiste alcun noleggio)\\
+Inoltre si può anche esprimere tramite funzioni di gruppo con \code{HAVING COUNT(...) = (sotto-query con COUNT nel SELECT)}

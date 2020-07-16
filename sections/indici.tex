@@ -1,0 +1,160 @@
+Molto utili quando una interrogazione accede solo un piccolo sottoinsieme dei dati, che devono essere estratti da un file di grandi dimensioni
+Un indice è un insieme di coppie del tipo $(k_i, r_i)$ dove:
+\begin{itemize}
+    \item $k_i$ è un valore per la chiave di ricerca su cui l'indice è costruito (come vedremo, l'indice non contiene per forza tutti i possibili valori)
+    \item $r_i$ può assumere diverse forme, per il momento assumiamo che sia un puntatore al record (eventualmente il solo) con valore di chiave $k_i$. \`E quindi un RID
+\end{itemize}
+
+\subsection{Tipi di indici}
+Gli indici possono essere distinti in vari "combinazioni" di tipi, distinte qua con linee orizzontali.
+\hrulefill
+\begin{itemize}
+    \item \textbf{Indici ordinati (o indici ad albero)}: i valori di chiave $k_i$ vengono mantenuti ordinati nell'indice, in modo da poter essere reperiti più efficientemente
+    
+    \item \textbf{Indici hash}: si usa una funzione hash per determinare la posizione dei valori di chiave $k_i$ all'interno del file
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item \textbf{Clusterizzati}: (Al più uno per tabella) la chiave di ricerca dell'indice corrisponde agli attributi rispetto ai quali il file dei dati è mantenuto ordinato
+    \item \textbf{Non clusterizzati}: Il file non \`e ordinato secondo questo indice. (può oppure no essere ordinato per un altro indice)
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item \textbf{Primari}: La chiave dell'indice è chiave (primaria o alternativa) della relazione. Di conseguenza ad ogni entry dell'indice corrisponde un solo record
+    \item \textbf{Secondari}: La chiave dell'indice non è chiave (primaria o alternativa) della relazione. Spesso per evitare di duplicare una entry per cambiare solo il puntatore, si implementano liste di puntatori.
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item \textbf{Densi}: l’indice contiene una coppia per ciascun valore della chiave di ricerca.
+    \item \textbf{Sparsi}: (SOLO per indici clusterizzati) L’indice contiene un numero di coppie inferiore rispetto al numero di valori della chiave di ricerca.
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item \textbf{Singolo Livello}: Semplice indice
+    \item \textbf{Multi livello}: Indice (sparso) che punta a pezzi di un altro indice più "grande"
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item \textbf{Singolo Attributo}: indice la cui chiave di ricerca è costituita da un solo attributo
+    \item \textbf{Multi Attributo}: indice la cui chiave di ricerca è costituita da più di un attributo
+\end{itemize}
+
+\subsection{Indici ad albero}
+Gli indici ordinati vengono garantiti da una struttura ad albero.\\
+Requisiti:
+\begin{itemize}
+    \item \textbf{Bilanciamento}: L'albero deve essere bilanciato a seconda dei blocchi usati (e non rispetto al numero di nodi).
+    \item \textbf{Occupazione Minima}: L'utilizzo dei blocchi ha un limite inferiore
+    \item \textbf{Efficienza di Aggiornamento}: le operazioni di aggiornamento devono avere costo limitato
+\end{itemize}
+In particolare vediamo i \textbf{$\text{B}^+$-tree}, che hanno le seguenti proprietà:
+\begin{itemize}
+    \item Multi-livello
+    \item Clusterizzati / non clusterizzati
+    \item Primari / secondari
+    \item Densi / sparsi
+    \item Singolo attributo / multi-attributo
+\end{itemize}
+Ogni \textbf{nodo} corrisponde ad un \textbf{blocco}.\\
+Le operazioni di ricerca, inserimento e cancellazione hanno costo $O(\log N)$ con $N =$ numero di valori distinti della chiave di ricerca.
+
+\break
+
+In $\text{B}^+$-albero di \textbf{ordine $m$} ($m \geq 3$) abbiamo:
+\begin{itemize}
+    \item Ogni nodo contiene \textit{al più} $m-1$ elementi.
+    \item Ogni nodo, tranne la radice che ne può avere anche 1, ha almeno $\lceil m/2 \rceil - 1$ elementi.
+    \item Ogni nodo non foglia conenente $j$ elementi ha $j+1$ figli.
+\end{itemize}
+I nodi foglia hanno puntatori al nodo successivo.\\
+Il \textbf{sottoalbero sinistro} di un separatore contiene valori di chiave \textbf{minori} del separatore, quello \textbf{destro} valori di chiave \textbf{maggiori} od \textbf{uguali} al separatore.
+
+\subsubsection{Ricerca}
+Ci sono due casi particolari di ricerca negli alberi:
+\begin{itemize}
+    \item \textbf{Uguaglianza}: Percorro l'albero per la sua altezza fino alla foglia, se arrivo al nodo cercato allora lo trovo, altrimenti non esiste.
+    \item \textbf{Intervallo}: Percorro l'albero per trovare la foglia con valore minore, al che scorro le foglie tramite i puntatori alla foglia successiva fino ad arrivare alla fine dell'intervallo.
+\end{itemize}
+
+\subsubsection{Inserimento}
+\begin{itemize}
+    \item Cerca la foglia, \textbf{se esiste} aggiunge il puntatore alla lista dei puntatori
+    \item Se \textbf{non esiste}:
+    \begin{itemize}
+        \item Se la foglia \textbf{non \`e piena} si inserisce semplicemente la coppia (chiave, record)
+        \item Se la foglie \textbf{\`e piena} si suddivide la foglia. Questo può portare, nel caso che la foglia padre sia piena, a dover suddividere anch'essa e in casi estremi si propaga fino alla radice influenzandone anche l'altezza (ad esempio nel caso la radice abbia troppi valori, si dovrebbe splitatre creando una nuova radice).
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Cancellazione}
+Supponiamo che la chiave esiste (e che quindi venga trovata la foglia):
+\begin{itemize}
+    \item Se la foglia \textbf{non \`e troppo vuota} si cancella la chiave e riscrive la foglia aggiornata.
+    \item Se la foglia \textbf{\`e troppo vuota} si concatenano due foglie oppure si ribilancia l'albero.
+\end{itemize}
+
+\subsubsection{Stima dell'altezza}
+Se abbiamo un albero con $n$ numero di chiavi, $m$ il massimo numero di figli che un nodo può avere e $d$ il numero minimo, abbiamo:
+$$h_{\text{min}} = \lceil \log_m (n + 1) \rceil - 1$$
+$$h_{\text{max}} = \lfloor \log_{d}\frac{n+1}{2} \rfloor$$
+
+\subsection{Variante del B+ tree}
+Il B-tree \`e uguale a un $\text{B}^+$-tree ma ogni nodo, anche quelli interni, contiene il puntatore al dato. Di conseguenza migliora l'occupazione di memoria e la ricerca di una singola chiave può finire prima di arrivare alla foglia (meno costosa).\\
+Un $\text{B}^+$-tree \`e per\`o meglio per una ricerca di intervallo.
+
+\subsection{Indici Hash}
+Gli indici hash possono essere:
+\begin{itemize}
+    \item Singolo livello e clusterizzati
+    \item Multi-livello e non clusterizzati
+    \item Primari/secondari
+    \item Sempre densi
+    \item Singolo attributo/multi-attributo
+\end{itemize}
+Una funzione Hash $H(D_A) \rightarrow \{0, ..., M-1\}$ prende in input un valore di un attributo e ne restituisce l'indirizzo di un \textbf{bucket} che corrisponde a uno o più blocchi.\\
+La corrispondenza tra valori generati dalla funzione e indirizzi su disco viene mantenuta in una \textbf{bucket directory} (o bucket index) che viene salvata in un'\textbf{area primaria}.\\
+Quindi, un indice hash contiene tutte le coppie $(k_i,H(k_i))$.
+
+\subsubsection{Ricerca per uguaglianza}
+Si calcola l'indice e si accede al bucket.
+
+\subsubsection{Ricerca per intervallo}
+Un indice hash non supporta ricerche per intervallo
+
+\subsubsection{Inserimento}
+Nel caso in cui il bucket non supererebbe la capacità massima, si inserisce il valore.\\
+Nel caso in cui, invece, supererebbe la capacità massima, il sistema deve allocare un'\textbf{area di overflow}.
+\begin{itemize}
+    \item \textbf{Area primaria}: Composta di 1 o più blocchi SEMPRE sullo stesso cilindro, contigui se possibili. Allocati alla creazione dell'indice.
+    \item \textbf{Area di overflow}: Memorizzati dove si può quindi non ottimizzati.
+\end{itemize}
+Una funzione hash è detta \textbf{perfetta} se per un certo numero di record non produce trabocchi (trabocco = quando c'\`e bisogno di un area di overflow).\\
+Una funzione perfetta può sempre essere definita disponendo di un’area primaria con capacità complessiva pari al numero dei record da memorizzare.
+
+\subsubsection{Cancellazione}
+Si calcola l'indice e si cancella il record. Nel caso la cancellazione avvenisse nell'area di overflow, questa può causare la cancellazione dell'area di overflow.
+
+\subsubsection{Costi}
+\begin{itemize}
+    \item \textbf{In assenza di overflow}: Costo costante
+    \begin{itemize}
+        \item Costo di accesso al bucket index se non è già in memoria (1)
+        \item Costo di accesso al bucket (1 se corrisponde a un singolo blocco)
+        \item Costo di accesso al bucket (1 se corrisponde a un singolo blocco)
+    \end{itemize}
+    
+    \item \textbf{In presenza di overflow}: Costo non facilmente determinabile
+\end{itemize}
+
+\subsection{Confronto fra indici ad albero e hash}
+Quelli Hash sono più efficienti per confronti di uguaglianza, gli alberi per confronti di intervalli.

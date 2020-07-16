@@ -1,0 +1,9 @@
+Indichiamo con $R(A_1, A_2, ..., A_n)$ una relazione $R$ con attributi $A_1, ..., A_n$.\\
+Ogni relazione \textbf{non può} contenere tuple duplicate in alcun caso (in SQL si). \vspace{2mm} \\
+Indichiamo con $D_1, ..., D_n$ i domini dell'$i$-esimo attributo.\\
+Indichiamo come \textbf{grado} (a volte chiamato anche \textbf{rango}) il numero di attributi (colonne) di una relazione.\\
+Indichiamo come \textbf{cardinalità} il numero di tuple in un istanza. \vspace{2mm} \\
+Il "default" per un attributo \`e non-nullo. Si indica con $R(..., attributo_o, ...)$ se l'attributo con nome $attributo$ può assumere valori nulli. \vspace{2mm} \\
+Una chiave non può mai avere valori nulli o uguali su una stessa istanza.\\
+Una \textbf{chiave} \`e un sotto-insieme di una \textbf{superchiave} ma con il minor numero di attributi possibili (minimale). Si definisce \textbf{superchiave} un insieme di attributi che non assume mai valori uguali. Di conseguenza, l'insieme di \textbf{tutti} gli attributi di una relazione \`e \textbf{sempre} superchiave. \vspace{2mm} \\
+Una \textbf{chiave esterna} (segnalata come $R(..., \text{chiave\_esterna}^{\text{relazione\_di\_riferimento}}, ...)$) \`e valida/corretta se e solo se ha lo stesso numero di attributi della chiave della relazione di riferimento. Una chiave esterna può essere o può far parte chiave per la relazione corrente (non quella di riferimento).

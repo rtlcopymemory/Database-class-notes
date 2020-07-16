@@ -1,0 +1,20 @@
+Il tuning delle interrogazioni ha solo benefici siccome, al contrario di quelli precedenti, non modifica nessuno schema ma ottimizza "manualmente" le interrogazioni.
+\begin{itemize}
+    \item Se ci sono espressioni spesso non vengono usati indici (riscrivere pre-calcolando le espressioni)
+    \item In caso di Join
+    \begin{itemize}
+        \item Attributi numerici sono più veloci di attributi di tipo stringa
+        \item Indici clusterizzati permettono la valutazione dell'operatore di merge join
+    \end{itemize}
+    \item Evitare \code{HAVING} quando possibile
+    \item Utilizzare il meno possibile viste (non materializzate)
+    \item Disgiunzioni di condizioni (\code{OR}) sostituite con \code{UNION}
+    \item Non usare \code{DISTINCT} se non strettamente necessario
+\end{itemize}
+
+\subsection{Sottointerrogazioni}
+\begin{itemize}
+    \item Se \`e possibile, vengono rimosse
+    \item Se sono scalari, viene calcolato il risultato una volta
+    \item Se sono correlate devono invece essere eseguite ogni volta
+\end{itemize}

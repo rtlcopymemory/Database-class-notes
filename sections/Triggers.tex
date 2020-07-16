@@ -1,0 +1,44 @@
+I trigger vengono utilizzati per eseguire automaticamente operazioni quando si verifica una determinata situazione.\\
+I trigger si basano sul paradigma "evento-condizione-azione". \vspace{2mm} \\
+\code{CREATE TRIGGER <nome trigger>\\
+\{BEFORE|AFTER\} <evento> ON <tabella>\\
+\ [REFERENCING \{OLD | NEW\} \{ROW | TABLE\} AS <variabile>]\\
+\ [FOR EACH \{ROW | STATEMENT\}]\\
+\ [WHEN <condizione>]\\
+\{ <SQL> | BEGIN ATOMIC <Sequenza di comandi SQL> END \};}
+\vspace{4mm} \\ \noindent
+Possibili eventi:
+\begin{itemize}
+    \item \code{INSERT}
+    \item \code{DELETE}
+    \item \code{UPDATE [OF <lista attributi>]}
+\end{itemize}
+\vspace{4mm} \noindent
+Modalità di esecuzione:
+\begin{itemize}
+    \item \textbf{Orientata all'istanza}: \code{FOR EACH ROW} eseguito per ogni tupla
+    \item \textbf{Orientata all'insieme}: \code{FOR EACH STATEMENT} eseguito una volta per tutte le tuple
+\end{itemize}
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{\textwidth}{| X | X | X |}
+        \hline
+        Modalità              & Evento                                        & Tabelle/Tuple di transizione \\ \hline
+        \code{BEFORE ROW}     & \code{INSERT \newline DELETE \newline UPDATE} & \code{NEW \newline OLD \newline NEW, OLD} \\ \hline
+        \code{AFTER ROW}      & \code{INSERT \newline DELETE \newline UPDATE} & \code{NEW, NEW TABLE \newline OLD, OLD TABLE \newline TUTTE} \\ \hline
+        \code{BEFORE STATEMENT}      & \code{INSERT \newline DELETE \newline UPDATE} & \code{- \newline - \newline -} \\ \hline
+        \code{AFTER STATEMENT}      & \code{INSERT \newline DELETE \newline UPDATE} & \code{NEW TABLE \newline OLD TABLE \newline NEW TABLE, OLD TABLE} \\ \hline
+    \end{tabularx}
+\end{table}
+\vspace{4mm} \break \noindent
+Ordine di selezione dei trigger:
+\begin{enumerate}
+    \item \code{BEFORE, FOR EACH STATEMENT}
+    \item \code{BEFORE, FOR EACH ROW}
+    \item \code{AFTER, FOR EACH ROW}
+    \begin{itemize}
+        \item Verifica dei vincoli
+    \end{itemize}
+    \item \code{AFTER, FOR EACH STATEMENT}
+\end{enumerate}

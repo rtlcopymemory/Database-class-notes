@@ -1,0 +1,44 @@
+La normalizzazione esiste per risolvere dei problemi che potrebbero causare perdita di efficienza o difficoltà a mantenere L'Integrità dei dati. Queste anomalie sono:
+\begin{itemize}
+    \item \textbf{ridondanza}: attributi ripetuti
+    \item \textbf{anomalia di aggiornamento}: aggiornare una tupla richiede aggiornarne multiple
+    \item \textbf{anomalia di inserimento}: inserire una tupla richiede l'inserimento di tutti gli attributi
+    \item \textbf{anomalia di cancellazione}: cancellare tutte le tuple per un solo insieme di attributi vuol dire perdere informazioni anche per gli altri attributi
+\end{itemize}
+
+\subsection{Dipendenze Funzionali}
+Esiste in $r$ una dipendenza funzionale (FD) da $Y$ a $Z$ se, per ogni coppia di tuple $t_1$ e $t_2$ di $r$ con gli stessi valori su $Y$, risulta che $t_1$ e $t_2$ hanno gli stessi valori anche su $Z$.\\
+Notazione:\\
+$X$ implica $Y$
+$$X \rightarrow Y$$
+Sapendo l'attributo $X$ ricaviamo $Y$, oppure $Y$ \`e univocamente ricavabile da $X$.\\
+Si dice che una FD \`e \textit{banale} se dato $Y \rightarrow A$, $A$ fa parte di $Y$ (ad esempio $A B \rightarrow A$).\\
+Si dice che un insieme di attributi \`e \textbf{chiave} quando:
+\begin{itemize}
+    \item \`e minimale
+    \item da tali attributi, tramite le FD si arriva a tutti gli attributi della tupla
+    \item gli attributi non si ripetono mai nella tabella
+\end{itemize}
+Se non \`e minimale allora \`e \textit{superchiave}
+
+\subsection{BCNF}
+Una relazione $r$ \`e in forma normale di Boyce e Codd se, per ogni dipendenza funzionale (non banale) $X \rightarrow Y$ definita su di essa, $X$ contiene una chiave $K$ di $r$.\\
+Se una relazione non \`e in BCNF allora va divisa in più relazioni in base alle dipendenze funzionali.
+
+\subsection{Decomposizioni senza perdita}
+Una decomposizione si dice senza perdita se facendo il join fra le tabelle ottenute ottengo sempre la tabella di partenza.\\
+Una decomposizione dovrebbe sempre soddisfare:
+\begin{itemize}
+    \item La decomposizione senza perdita, che garantisce la ricostruzione delle informazioni originarie.
+    \item La conservazione delle dipendenze, che garantisce il mantenimento dei vincoli di integrità originari
+\end{itemize}
+
+\subsection{Terza forma normale (3NF)}
+Una relazione $r$ \`e in terza forma normale se, per ogni FD (non banale) $X \rightarrow Y$ definita su $r$, \`e verificata \textbf{almeno} una delle seguenti condizioni:
+\begin{itemize}
+    \item $X$ contiene una chiave $K$ di $r$
+    \item ogni attributo $Y$ \`e contenuto in almeno una chiave di $r$
+\end{itemize}
+Essendo una forma normale più permissiva della BCNF \`e anche sempre raggiungibile (al contrario della BCNF).
+\vspace{6mm} \\
+Se la relazione ha una sola chiave allora le due forme normali coincidono.
